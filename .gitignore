@@ -256,8 +256,5 @@ $RECYCLE.BIN/
 # End of https://www.gitignore.io/api/java,node,macos,angular,windows,java-web,intellij,code-java,visualstudiocode
 
 .settings/**
-backend/src/main/resources/static/
-backend/.settings/
-frontend/dist/**
-frontend/.settings/
-**/.sts4-cache/**
+
+src/main/asciidoc/
