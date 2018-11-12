@@ -2,6 +2,7 @@ package com.challenge.pedrotorres.pacificbooking.domain.booking;
 
 import com.challenge.pedrotorres.pacificbooking.domain.camper.Camper;
 import com.challenge.pedrotorres.pacificbooking.domain.campsite.Site;
+import io.vertx.core.json.JsonObject;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import javax.persistence.Entity;

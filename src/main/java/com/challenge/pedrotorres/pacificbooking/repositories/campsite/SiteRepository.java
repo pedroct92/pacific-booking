@@ -1,4 +1,4 @@
-package com.challenge.pedrotorres.pacificbooking.repositories;
+package com.challenge.pedrotorres.pacificbooking.repositories.campsite;
 
 import com.challenge.pedrotorres.pacificbooking.domain.campsite.Site;
 import org.springframework.data.repository.CrudRepository;

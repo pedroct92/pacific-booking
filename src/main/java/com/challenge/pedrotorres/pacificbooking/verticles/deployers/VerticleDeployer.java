@@ -2,8 +2,9 @@ package com.challenge.pedrotorres.pacificbooking.verticles.deployers;
 
 import com.challenge.pedrotorres.pacificbooking.App;
 import com.challenge.pedrotorres.pacificbooking.api.BookingApi;
-import com.challenge.pedrotorres.pacificbooking.verticles.factory.SpringVerticleFactory;
-import com.challenge.pedrotorres.pacificbooking.verticles.workers.BookingWorkers;
+import com.challenge.pedrotorres.pacificbooking.verticles.factory.BookingVerticleFactory;
+import com.challenge.pedrotorres.pacificbooking.verticles.workers.AvailabilityWorker;
+import com.challenge.pedrotorres.pacificbooking.verticles.workers.BookingWorker;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -25,7 +26,9 @@ public class VerticleDeployer implements ApplicationListener<ApplicationReadyEve
 
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
 
-    private SpringVerticleFactory verticleFactory;
+    private static final Integer NUMBER_OF_VERTICLES = 3;
+
+    private BookingVerticleFactory verticleFactory;
 
     @Value("${vertx.worker.pool.size}")
     private Integer workerPoolSize;
@@ -33,46 +36,77 @@ public class VerticleDeployer implements ApplicationListener<ApplicationReadyEve
     @Value("${vertx.springWorker.instances}")
     private Integer springWorkerInstances;
 
+    private Vertx vertx;
+
+    private CountDownLatch deployLatch = new CountDownLatch(NUMBER_OF_VERTICLES);
+
+    private AtomicBoolean failedDeployment = new AtomicBoolean(false);
+
     @Autowired
-    public VerticleDeployer(SpringVerticleFactory verticleFactory) {
+    public VerticleDeployer(BookingVerticleFactory verticleFactory) {
         this.verticleFactory = verticleFactory;
     }
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        Vertx vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(workerPoolSize));
-
+        vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(workerPoolSize));
         vertx.registerVerticleFactory(verticleFactory);
 
-        CountDownLatch deployLatch = new CountDownLatch(2);
-        AtomicBoolean failed = new AtomicBoolean(false);
+        this.deployRestApi();
+        this.deployBookingWorkers();
+        this.deployAvailabilityWorkers();
+        this.checkDeploymentStatus();
+    }
 
-        String restApiVerticleName = verticleFactory.prefix() + ":" + BookingApi.class.getName();
+    private void deployRestApi() {
+        String restApiVerticleName = verticleFactory.getVerticleName(BookingApi.class.getName());
+
         vertx.deployVerticle(restApiVerticleName, ar -> {
             if (ar.failed()) {
-                LOG.error("Failed to deploy verticle", ar.cause());
-                failed.compareAndSet(false, true);
+                LOG.error("Failed to deploy {}: {}", restApiVerticleName, ar.cause());
+                failedDeployment.compareAndSet(false, true);
             }
             deployLatch.countDown();
         });
+    }
 
-        DeploymentOptions workerDeploymentOptions = new DeploymentOptions()
+    private void deployBookingWorkers() {
+        String workerVerticleName = verticleFactory.getVerticleName(BookingWorker.class.getName());
+
+        DeploymentOptions deploymentOptions = new DeploymentOptions()
                 .setWorker(true)
                 .setInstances(springWorkerInstances);
 
-        String workerVerticleName = verticleFactory.prefix() + ":" + BookingWorkers.class.getName();
-        vertx.deployVerticle(workerVerticleName, workerDeploymentOptions, ar -> {
+        vertx.deployVerticle(workerVerticleName, deploymentOptions, ar -> {
             if (ar.failed()) {
-                LOG.error("Failed to deploy verticle", ar.cause());
-                failed.compareAndSet(false, true);
+                LOG.error("Failed to deploy {}: {}", workerVerticleName, ar.cause());
+                failedDeployment.compareAndSet(false, true);
             }
             deployLatch.countDown();
         });
+    }
 
+    private void deployAvailabilityWorkers() {
+        String workerVerticleName = verticleFactory.getVerticleName(AvailabilityWorker.class.getName());
+
+        DeploymentOptions deploymentOptions = new DeploymentOptions()
+                .setWorker(true)
+                .setInstances(springWorkerInstances);
+
+        vertx.deployVerticle(workerVerticleName, deploymentOptions, ar -> {
+            if (ar.failed()) {
+                LOG.error("Failed to deploy {}: {}", workerVerticleName, ar.cause());
+                failedDeployment.compareAndSet(false, true);
+            }
+            deployLatch.countDown();
+        });
+    }
+
+    private void checkDeploymentStatus() {
         try {
             if (!deployLatch.await(5, SECONDS)) {
                 throw new RuntimeException("Timeout waiting for verticle deployments");
-            } else if (failed.get()) {
+            } else if (failedDeployment.get()) {
                 throw new RuntimeException("Failure while deploying verticles");
             }
         } catch (InterruptedException e) {

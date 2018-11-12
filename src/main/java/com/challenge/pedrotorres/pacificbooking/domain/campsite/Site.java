@@ -1,12 +1,6 @@
 package com.challenge.pedrotorres.pacificbooking.domain.campsite;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
@@ -15,18 +9,19 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import java.util.List;
 
 @Entity
+@SequenceGenerator(name = "site_seq")
 @DataObject(generateConverter = true)
 public class Site {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "site_seq")
     private Long id;
 
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "site_id")
-    private List<SiteAvailability> siteAvailabilities;
+//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name = "site_id")
+//    private List<SiteAvailability> siteAvailabilities;
 
     @Version
     private Long version;
@@ -69,13 +64,13 @@ public class Site {
         this.version = version;
     }
 
-    public List<SiteAvailability> getSiteAvailabilities() {
-        return siteAvailabilities;
-    }
-
-    public void setSiteAvailabilities(List<SiteAvailability> siteAvailabilities) {
-        this.siteAvailabilities = siteAvailabilities;
-    }
+//    public List<SiteAvailability> getSiteAvailabilities() {
+//        return siteAvailabilities;
+//    }
+//
+//    public void setSiteAvailabilities(List<SiteAvailability> siteAvailabilities) {
+//        this.siteAvailabilities = siteAvailabilities;
+//    }
 
     @Override
     public String toString() {

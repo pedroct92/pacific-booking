@@ -1,9 +1,13 @@
 package com.challenge.pedrotorres.pacificbooking.api;
 
+import com.challenge.pedrotorres.pacificbooking.api.requests.booking.NewBookingRequest;
+import com.challenge.pedrotorres.pacificbooking.api.requests.campsite.AvailabilityRequest;
 import com.challenge.pedrotorres.pacificbooking.domain.campsite.Site;
 import com.challenge.pedrotorres.pacificbooking.proxies.booking.BookingServiceProxy;
-import com.google.gson.Gson;
+import com.challenge.pedrotorres.pacificbooking.proxies.campsite.SiteAvailabilityServiceProxy;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.vertx.core.Future;
+import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -16,18 +20,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import static java.net.HttpURLConnection.HTTP_CREATED;
+import static java.net.HttpURLConnection.HTTP_OK;
 
 @Component
 public class BookingApi extends AbstractVerticle {
 
     private static final Logger LOG = LoggerFactory.getLogger(BookingApi.class);
 
-    private static final Gson gson = new Gson();
-
     @Value("${app.conf.http.port}")
     private Integer httpPort;
 
+    @Value("${app.conf.api.base.url}")
+    private String baseApiUrl;
+
     private BookingServiceProxy bookingServiceProxy;
+
+    private SiteAvailabilityServiceProxy siteAvailabilityServiceProxy;
 
     @Override
     public void start(Future<Void> startFuture) {
@@ -35,17 +43,27 @@ public class BookingApi extends AbstractVerticle {
                                     .setAddress(BookingServiceProxy.ADDRESS)
                                     .build(BookingServiceProxy.class);
 
+        Router router = this.createRouterWithHandlers();
+        this.createProxies();
+        this.createHttpServer(startFuture, router);
+
+        Json.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
+
+    private Router createRouterWithHandlers() {
         Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
 
-        router.get("/booking").handler(this::getBookingCount);
-        router.post("/booking").handler(this::newBooking);
+        router.post(baseApiUrl + "/booking").handler(this::newBooking);
+        router.get(baseApiUrl + "/availabilities/:site_id").handler(this::getAvailabilitiesForCampsite);
 
+        router.route().handler(StaticHandler.create());
 
-        StaticHandler staticHandler = StaticHandler.create();
-        router.route().handler(staticHandler);
+        return router;
+    }
 
+    private void createHttpServer(Future<Void> startFuture, Router router) {
         vertx.createHttpServer().requestHandler(router::accept).listen(httpPort, listen -> {
             if (listen.succeeded()) {
                 LOG.info("BookingApi started on the http port {}", httpPort);
@@ -57,22 +75,42 @@ public class BookingApi extends AbstractVerticle {
         });
     }
 
-    private void newBooking(RoutingContext routingContext) {
-        Site site = new Site(routingContext.getBodyAsJson());
+    private void createProxies() {
+        bookingServiceProxy = new ServiceProxyBuilder(vertx)
+                .setAddress(BookingServiceProxy.ADDRESS)
+                .build(BookingServiceProxy.class);
 
-        bookingServiceProxy.add(site, ar -> {
+
+        siteAvailabilityServiceProxy = new ServiceProxyBuilder(vertx)
+                .setAddress(SiteAvailabilityServiceProxy.ADDRESS)
+                .build(SiteAvailabilityServiceProxy.class);
+    }
+
+    private void getAvailabilitiesForCampsite(RoutingContext routingContext) {
+        Site site = new Site();
+        site.setId(Long.parseLong(routingContext.pathParam("site_id")));
+
+        AvailabilityRequest request = new AvailabilityRequest();
+
+        request.setSite(site);
+        request.setStartDate(routingContext.queryParams().get("startDate"));
+        request.setEndDate(routingContext.queryParams().get("endDate"));
+
+        siteAvailabilityServiceProxy.getAvailabilitiesDatesByDateAndSite(request, ar -> {
             if (ar.succeeded()) {
-                routingContext.response().setStatusCode(HTTP_CREATED).end(gson.toJson(ar.result()));
+                routingContext.response().setStatusCode(HTTP_OK).end(Json.encode(ar.result()));
             } else {
                 routingContext.fail(ar.cause());
             }
         });
     }
 
-    private void getBookingCount(RoutingContext routingContext) {
-        bookingServiceProxy.getAllSites(ar -> {
+    private void newBooking(RoutingContext routingContext) {
+        NewBookingRequest request = new NewBookingRequest(routingContext.getBodyAsJson());
+
+        bookingServiceProxy.addBooking(request, ar -> {
             if (ar.succeeded()) {
-                routingContext.response().end(ar.result().size() + "");
+                routingContext.response().setStatusCode(HTTP_CREATED).end(Json.encode(ar.result()));
             } else {
                 routingContext.fail(ar.cause());
             }

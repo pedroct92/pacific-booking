@@ -1,15 +1,15 @@
 package com.challenge.pedrotorres.pacificbooking.services.booking;
 
-import com.challenge.pedrotorres.pacificbooking.domain.campsite.Site;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
-import java.util.List;
+import com.challenge.pedrotorres.pacificbooking.api.requests.booking.CancelBookingRequest;
+import com.challenge.pedrotorres.pacificbooking.api.requests.booking.ChangeBookingRequest;
+import com.challenge.pedrotorres.pacificbooking.api.requests.booking.NewBookingRequest;
+import com.challenge.pedrotorres.pacificbooking.commons.Response;
 
-@CacheConfig(cacheNames = "test")
 public interface BookingService {
 
-    @Cacheable
-    List<Site> getAllSites();
+    Response addBooking(NewBookingRequest request);
 
-    Site add(Site site);
+    Response changeBooking(ChangeBookingRequest request);
+
+    Response cancelBooking(CancelBookingRequest request);
 }

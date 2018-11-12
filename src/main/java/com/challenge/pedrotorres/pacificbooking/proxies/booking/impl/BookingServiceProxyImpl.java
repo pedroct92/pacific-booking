@@ -1,6 +1,7 @@
 package com.challenge.pedrotorres.pacificbooking.proxies.booking.impl;
 
-import com.challenge.pedrotorres.pacificbooking.domain.campsite.Site;
+import com.challenge.pedrotorres.pacificbooking.api.requests.booking.NewBookingRequest;
+import com.challenge.pedrotorres.pacificbooking.commons.Response;
 import com.challenge.pedrotorres.pacificbooking.proxies.booking.BookingServiceProxy;
 import com.challenge.pedrotorres.pacificbooking.services.booking.BookingService;
 import io.vertx.core.AsyncResult;
@@ -8,8 +9,6 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class BookingServiceProxyImpl implements BookingServiceProxy {
@@ -22,12 +21,7 @@ public class BookingServiceProxyImpl implements BookingServiceProxy {
     }
 
     @Override
-    public void getAllSites(Handler<AsyncResult<List<Site>>> resultHandler) {
-        Future.succeededFuture(this.bookingService.getAllSites()).setHandler(resultHandler);
-    }
-
-    @Override
-    public void add(Site site, Handler<AsyncResult<Site>> resultHandler) {
-        Future.succeededFuture(this.bookingService.add(site)).setHandler(resultHandler);
+    public void addBooking(NewBookingRequest request, Handler<AsyncResult<Response>> resultHandler) {
+        Future.succeededFuture(this.bookingService.addBooking(request)).setHandler(resultHandler);
     }
 }
