@@ -1,4 +1,4 @@
-package com.challenge.pedrotorres.pacificbooking.cache;
+package com.challenge.pedrotorres.pacificbooking.commons.cache;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.cache.interceptor.KeyGenerator;

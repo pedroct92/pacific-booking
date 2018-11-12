@@ -2,10 +2,12 @@ package com.challenge.pedrotorres.pacificbooking.domain.booking;
 
 import com.challenge.pedrotorres.pacificbooking.domain.camper.Camper;
 import com.challenge.pedrotorres.pacificbooking.domain.campsite.Site;
-import io.vertx.core.json.JsonObject;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -22,11 +24,18 @@ public class Booking {
     @GeneratedValue
     private Long id;
 
+    @Column(nullable = false)
     private String code;
 
+    @Column(nullable = false)
     private LocalDate startDate;
 
+    @Column(nullable = false)
     private LocalDate endDate;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false, length = 10)
+    private BookingStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "camper_id")
@@ -36,6 +45,7 @@ public class Booking {
     @JoinColumn(name = "site_id")
     private Site site;
 
+    @Column(nullable = false)
     private LocalDateTime created;
 
     private LocalDateTime modified;
@@ -73,6 +83,14 @@ public class Booking {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public BookingStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BookingStatus status) {
+        this.status = status;
     }
 
     public Camper getCamper() {
@@ -118,5 +136,10 @@ public class Booking {
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
+    }
+
+    public enum BookingStatus {
+        CONFIRMED,
+        CANCELLED;
     }
 }

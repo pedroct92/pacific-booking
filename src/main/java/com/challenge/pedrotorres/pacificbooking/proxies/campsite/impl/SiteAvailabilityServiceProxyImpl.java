@@ -1,7 +1,7 @@
 package com.challenge.pedrotorres.pacificbooking.proxies.campsite.impl;
 
 import com.challenge.pedrotorres.pacificbooking.api.requests.campsite.AvailabilityRequest;
-import com.challenge.pedrotorres.pacificbooking.commons.Response;
+import com.challenge.pedrotorres.pacificbooking.api.responses.Response;
 import com.challenge.pedrotorres.pacificbooking.proxies.campsite.SiteAvailabilityServiceProxy;
 import com.challenge.pedrotorres.pacificbooking.services.campsite.SiteAvailabilityService;
 import io.vertx.core.AsyncResult;

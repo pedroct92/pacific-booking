@@ -1,7 +1,7 @@
 package com.challenge.pedrotorres.pacificbooking.services.campsite;
 
 import com.challenge.pedrotorres.pacificbooking.api.requests.campsite.AvailabilityRequest;
-import com.challenge.pedrotorres.pacificbooking.commons.Response;
+import com.challenge.pedrotorres.pacificbooking.api.responses.Response;
 import org.springframework.cache.annotation.Cacheable;
 
 public interface SiteAvailabilityService {

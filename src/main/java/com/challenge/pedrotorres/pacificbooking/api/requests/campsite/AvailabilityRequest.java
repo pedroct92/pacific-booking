@@ -1,6 +1,5 @@
 package com.challenge.pedrotorres.pacificbooking.api.requests.campsite;
 
-import com.challenge.pedrotorres.pacificbooking.domain.campsite.Site;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
@@ -9,7 +8,7 @@ import java.util.Objects;
 @DataObject(generateConverter = true)
 public class AvailabilityRequest {
 
-    private Site site;
+    private Long siteId;
     private String startDate;
     private String endDate;
 
@@ -27,12 +26,12 @@ public class AvailabilityRequest {
         return json;
     }
 
-    public Site getSite() {
-        return site;
+    public Long getSiteId() {
+        return siteId;
     }
 
-    public void setSite(Site site) {
-        this.site = site;
+    public void setSiteId(Long siteId) {
+        this.siteId = siteId;
     }
 
     public String getStartDate() {
@@ -56,13 +55,13 @@ public class AvailabilityRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AvailabilityRequest that = (AvailabilityRequest) o;
-        return Objects.equals(site, that.site) &&
+        return Objects.equals(siteId, that.siteId) &&
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(endDate, that.endDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(site, startDate, endDate);
+        return Objects.hash(siteId, startDate, endDate);
     }
 }

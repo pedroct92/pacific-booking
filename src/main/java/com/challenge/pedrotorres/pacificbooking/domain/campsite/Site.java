@@ -1,12 +1,16 @@
 package com.challenge.pedrotorres.pacificbooking.domain.campsite;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Version;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
-import java.util.List;
 
 @Entity
 @SequenceGenerator(name = "site_seq")
@@ -17,11 +21,8 @@ public class Site {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "site_seq")
     private Long id;
 
+    @Column(nullable = false)
     private String name;
-
-//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "site_id")
-//    private List<SiteAvailability> siteAvailabilities;
 
     @Version
     private Long version;
@@ -63,14 +64,6 @@ public class Site {
     public void setVersion(Long version) {
         this.version = version;
     }
-
-//    public List<SiteAvailability> getSiteAvailabilities() {
-//        return siteAvailabilities;
-//    }
-//
-//    public void setSiteAvailabilities(List<SiteAvailability> siteAvailabilities) {
-//        this.siteAvailabilities = siteAvailabilities;
-//    }
 
     @Override
     public String toString() {

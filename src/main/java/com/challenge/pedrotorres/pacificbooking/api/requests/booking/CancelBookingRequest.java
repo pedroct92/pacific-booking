@@ -4,7 +4,7 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
 @DataObject(generateConverter = true)
-public class CancelBookingRequest {
+public class CancelBookingRequest extends BaseBookingRequest {
 
     public CancelBookingRequest() {
 

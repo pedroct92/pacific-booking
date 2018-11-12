@@ -1,4 +1,4 @@
-package com.challenge.pedrotorres.pacificbooking.commons;
+package com.challenge.pedrotorres.pacificbooking.commons.generators;
 
 import java.time.LocalDate;
 

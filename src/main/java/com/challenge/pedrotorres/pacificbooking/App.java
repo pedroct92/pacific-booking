@@ -1,6 +1,6 @@
 package com.challenge.pedrotorres.pacificbooking;
 
-import com.challenge.pedrotorres.pacificbooking.cache.CustomKeyGenerator;
+import com.challenge.pedrotorres.pacificbooking.commons.cache.CustomKeyGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;

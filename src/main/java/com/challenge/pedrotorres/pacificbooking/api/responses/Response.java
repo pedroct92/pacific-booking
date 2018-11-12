@@ -1,6 +1,6 @@
-package com.challenge.pedrotorres.pacificbooking.commons;
+package com.challenge.pedrotorres.pacificbooking.api.responses;
 
-import com.challenge.pedrotorres.pacificbooking.commons.ResponseConverter;
+import com.challenge.pedrotorres.pacificbooking.api.responses.ResponseConverter;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.core.json.Json;
@@ -15,10 +15,12 @@ public class Response {
     @GenIgnore
     private Object results;
     private List<String> errors;
+    private Integer status;
 
-    private Response(Object results, List<String> errors) {
+    private Response(Object results, List<String> errors, Integer status) {
         this.results = results;
         this.errors = errors;
+        this.status = status;
     }
 
     public Response(JsonObject jsonObject) {
@@ -54,10 +56,19 @@ public class Response {
         this.errors = errors;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     public static class ResponseBuilder {
 
         private Object results;
         private List<String> errors;
+        private Integer status;
 
         public ResponseBuilder results(Object results) {
             this.results = results;
@@ -72,12 +83,17 @@ public class Response {
             return this;
         }
 
+        public ResponseBuilder withStatus(Integer status) {
+            this.status = status;
+            return this;
+        }
+
         public Boolean hasErrors() {
             return this.errors != null && !this.errors.isEmpty();
         }
 
         public Response build() {
-            return new Response(results, errors);
+            return new Response(results, errors, status);
         }
     }
 }

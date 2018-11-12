@@ -5,6 +5,7 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 import java.time.LocalDate;
 
@@ -26,11 +26,10 @@ public class SiteAvailability {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "site_availability_seq")
     private Long id;
 
+    @Column(nullable = false)
     private LocalDate dayDate;
 
-    @Transient
-    private String date;
-
+    @Column(nullable = false)
     private Integer remainingPlaces;
 
     @JsonIgnore
@@ -69,14 +68,6 @@ public class SiteAvailability {
 
     public void setDayDate(LocalDate dayDate) {
         this.dayDate = dayDate;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public Integer getRemainingPlaces() {
