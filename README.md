@@ -70,11 +70,11 @@ Create a new booking for a campsite
 
 ```json
 {
-	"firstName": "Pedro",
-	"lastName": "Coelho Torres",
-	"email": "pedro@hire.me",
-	"startDate": "2018-11-15",
-	"endDate": "2018-11-17"
+  "firstName": "Pedro",
+  "lastName": "Coelho Torres",
+  "email": "pedro@hire.me",
+  "startDate": "2018-11-15",
+  "endDate": "2018-11-17"
 }
 ```
 
@@ -88,9 +88,15 @@ Create a new booking for a campsite
 
 ```json
 {
-    "id": 123,
-    "name": "Build something project dot com",
-    "url": "http://testserver/api/accounts/123/"
+  "results":{
+    "bookingId": 2,
+    "bookingCode": "D7LP4W2018",
+    "camperName": "Pedro Coelho Torres", 
+    "status": "CONFIRMED", 
+    "startDate": "2018-11-19", 
+    "endDate": "2018-11-20"
+  },
+  "status":201
 }
 ```
 
@@ -174,11 +180,11 @@ For a `bookingCode = D7LP4W2018`
 
 ```json
 {
-   "firstName": "Pedro",
-   "lastName": "Coelho Torres",
-   "email": "pedro@hire.me",
-   "startDate": "2018-11-20",
-   "endDate": "2018-11-22"
+  "firstName": "Pedro",
+  "lastName": "Coelho Torres",
+  "email": "pedro@hire.me",
+  "startDate": "2018-11-20",
+  "endDate": "2018-11-22"
 }
 ```
 
