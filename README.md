@@ -258,8 +258,9 @@ For a `bookingCode = 000000`
 
 **TODO**
 
-1. Adds a comprehensive unit tests coverage, specially on the services.
-2. Adds integration tests for all endpoints.
+1. Not allow a modification of a booking that was already cancelled.
+2. Adds a comprehensive unit tests coverage, specially on the services.
+3. Adds integration tests for all endpoints.
 4. Improve bossiness validation rules. Currently, the validations are quite "messy", Bean Validation would be a better approach.  
 5. Reduce dependencies on BookingService. The service is doing certain behaviours not directly related to its responsibility. 
 6. Improve JSON serialization with jackson. Vertx does not accept certain types to be parsed within the proxy calls. Some time need to be spent in order figure that out.
