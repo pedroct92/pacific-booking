@@ -111,14 +111,7 @@ public class BookingServiceImpl implements BookingService {
         LocalDate startDate = this.getDate(request.getStartDate());
         LocalDate endDate = this.getDate(request.getEndDate());
 
-        this.validateFirstName(request.getFirstName());
-        this.validateLastName(request.getLastName());
-        this.validateEmail(request.getEmail());
-        this.validateStartDateGreaterThanEndDate(startDate, endDate);
-        this.validateStartDateAfterToday(startDate);
-        this.validateEndDateOverOneMonth(endDate);
-        this.validateMaxDaysBooking(startDate, endDate);
-        this.validateMinDaysBooking(startDate, endDate);
+        this.validateBooking(startDate, endDate, request.getFirstName(), request.getLastName(), request.getEmail());
         this.decreaseAvailableRemainingPlaces(this.getValidAvailabilities(request.getCampsiteId(), startDate, endDate));
 
         Booking booking = new Booking();
@@ -137,15 +130,7 @@ public class BookingServiceImpl implements BookingService {
     private BookingInfo updateBooking(ChangeBookingRequest request) {
         LocalDate startDate = this.getDate(request.getStartDate());
         LocalDate endDate = this.getDate(request.getEndDate());
-
-        this.validateFirstName(request.getFirstName());
-        this.validateLastName(request.getLastName());
-        this.validateEmail(request.getEmail());
-        this.validateStartDateGreaterThanEndDate(startDate, endDate);
-        this.validateStartDateAfterToday(startDate);
-        this.validateEndDateOverOneMonth(endDate);
-        this.validateMaxDaysBooking(startDate, endDate);
-        this.validateMinDaysBooking(startDate, endDate);
+        this.validateBooking(startDate, endDate, request.getFirstName(), request.getLastName(), request.getEmail());
 
         Booking booking = this.getValidBookingByCode(request.getBookingCode());
 
@@ -167,6 +152,17 @@ public class BookingServiceImpl implements BookingService {
         bookingRepository.save(booking);
 
         return BookingInfo.mapFromBooking(booking);
+    }
+
+    private void validateBooking(LocalDate startDate, LocalDate endDate, String firstName, String lastName, String email) {
+        this.validateFirstName(firstName);
+        this.validateLastName(lastName);
+        this.validateEmail(email);
+        this.validateStartDateGreaterThanEndDate(startDate, endDate);
+        this.validateStartDateAfterToday(startDate);
+        this.validateEndDateOverOneMonth(endDate);
+        this.validateMaxDaysBooking(startDate, endDate);
+        this.validateMinDaysBooking(startDate, endDate);
     }
 
     private List<SiteAvailability> getValidAvailabilities(Long siteId, LocalDate startDate, LocalDate endDate) {
