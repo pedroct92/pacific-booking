@@ -1,6 +1,5 @@
 package com.challenge.pedrotorres.pacificbooking.api.responses;
 
-import com.challenge.pedrotorres.pacificbooking.api.responses.ResponseConverter;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.core.json.Json;
@@ -13,7 +12,7 @@ import java.util.List;
 public class Response {
 
     @GenIgnore
-    private Object results;
+    private Object results; //TODO Should use generics instead of object
     private List<String> errors;
     private Integer status;
 
@@ -31,7 +30,7 @@ public class Response {
     public JsonObject toJson() {
         JsonObject json = new JsonObject();
 
-        if(this.results != null && !(this.results instanceof List)) { // FIXME
+        if(this.results != null && !(this.results instanceof List)) { // TODO improve json serialization process
             json.put("results", new JsonObject(Json.encode(this.results)));
         } else {
             json.put("results", this.results);

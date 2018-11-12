@@ -258,3 +258,4 @@ For a `bookingCode = 000000`
 5. Reduce dependencies on BookingService. The service is doing certain behaviours not directly related to its responsibility. 
 6. Improve JSON serialization with jackson. Vertx does not accept certain types to be parsed within the proxy calls. Some time need to be spent in order figure that out.
 7. Adds swagger in order to better document all the endpoints.
+8. Deploy application on a could provider (heroku) so stress tests could be performed to guarantee the resilience of the solution.
